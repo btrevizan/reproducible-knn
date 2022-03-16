@@ -5,12 +5,13 @@ import numpy as np
 
 class KNN:
 
-    def __init__(self, k: int, dist: str = 'euclidean'):
+    def __init__(self, k: int, dist: str = 'euclidean', evaluator_method: str = 'majority'):
         """
         Implement the K Nearest Neighbors.
 
         :param k: (int) Number of neighbors to consider on classification. Must be greater than 1.
         :param dist: (str, default 'euclidean') Distance metric. Possible values: euclidean, (TBD)...
+        :param evaluator_method: (str, default 'majority') Method of evaluating the nearest k neighbors. Possible values: majority, (TBD)...
 
         Raise ValueError if k <= 1.
         Raise ValueError if distance metric is unknown.
@@ -25,6 +26,7 @@ class KNN:
         self.distance_matrix = None
         self.targets = None
         self.k = k
+        self.evaluator_method = evaluator_method
 
     def fit(self, x, y):
         """
