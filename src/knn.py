@@ -1,4 +1,4 @@
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from math import pow, sqrt
 import numpy as np
 
@@ -22,15 +22,18 @@ class KNN:
         if dist not in ['euclidean']:
             raise ValueError(f'dist must be euclidean, (TBD)... {dist} found.')
 
+        if dist not in ['majority']:
+            raise ValueError(f'evaluator_method must be majority, (TBD)... {evaluator_method} found.')
+
         self.distance_metric = eval(f'self._{dist}')
-        self.distance_matrix = None
-        self.targets = None
+        self.evaluator_method = eval(f'self._{evaluator_method}')
+        self.x = None
+        self.y = None
         self.k = k
-        self.evaluator_method = evaluator_method
 
     def fit(self, x, y):
         """
-        Create a distance matrix N x N, where N is the number of instances.
+        Store x and y.
 
         :param x: (pandas.DataFrame or numpy.ndarray) Training instances.
         :param y: (pandas.Series or numpy.array) Target class for each instance.
@@ -38,26 +41,31 @@ class KNN:
         if type(x) is DataFrame:
             x = x.to_numpy()
 
-        n, m = x.shape
-        self.targets = y
-        self.distance_matrix = np.zeros((n, n))
-
-        for i in range(n):
-            for j in range(i + 1, n):
-                self.distance_matrix[i, j] = self.distance_metric(x[i], x[j])
+        self.x = x
+        self.y = y
 
     def predict(self, x):
         """
+        Predict the class of the instance x.
 
-        :param x:
-        :return:
+        :param x: (Series/np.ndarray) Instance to be predicted.
+        :return: (int/str) Target class.
 
         Raise ValueError if called before fit.
         """
-        if self.distance_matrix is None:
+        if self.x is None:
             raise ValueError('You should fit the model before predicting.')
 
-        raise NotImplementedError()
+        if type(x) is Series:
+            x = x.to_numpy()
+
+        # TODO: calculate distance using sexf.x and x
+        x_dist = None
+
+        # TODO: filter self.y to get the k nearest neighbors
+        y = None
+
+        return self.evaluator_method(x_dist, y)
 
     @staticmethod
     def _euclidean(a: np.ndarray, b: np.ndarray) -> float:
@@ -77,3 +85,13 @@ class KNN:
         sqrt_sum_squared_error = sqrt(sum_squared_error)
 
         return sqrt_sum_squared_error
+
+    def _majority(self, x_dist: np.ndarray, y: np.ndarray):
+        """
+        ...
+
+        :param x_dist: (np.ndarray) List of distances of the K nearest instances.
+        :param y: (np.ndarray) List of classes of the K nearest instances.
+        :return: (int/str) Target class.
+        """
+        raise NotImplementedError()
