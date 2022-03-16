@@ -59,13 +59,15 @@ class KNN:
         if type(x) is Series:
             x = x.to_numpy()
 
-        # TODO: calculate distance using sexf.x and x
-        x_dist = None
+        distances_by_id = {inst_id: self.distance_metric(inst, x) for inst_id, inst in enumerate(self.x)}
 
-        # TODO: filter self.y to get the k nearest neighbors
-        y = None
+        from operator import itemgetter
+        nearest_k_ids = list(map(itemgetter(0), sorted(distances_by_id.items(), key=itemgetter(1))))[:self.k]
 
-        return self.evaluator_method(x_dist, y)
+        x_dists = [distances_by_id[id] for id in nearest_k_ids]
+        y = [self.y[id] for id in nearest_k_ids]
+
+        return self.evaluator_method(x_dists, y)
 
     @staticmethod
     def _euclidean(a: np.ndarray, b: np.ndarray) -> float:
@@ -86,11 +88,11 @@ class KNN:
 
         return sqrt_sum_squared_error
 
-    def _majority(self, x_dist: np.ndarray, y: np.ndarray):
+    def _majority(self, x_dists: np.ndarray, y: np.ndarray):
         """
         ...
 
-        :param x_dist: (np.ndarray) List of distances of the K nearest instances.
+        :param x_dists: (np.ndarray) List of distances of the K nearest instances.
         :param y: (np.ndarray) List of classes of the K nearest instances.
         :return: (int/str) Target class.
         """
