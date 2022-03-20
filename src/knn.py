@@ -112,3 +112,37 @@ class KNN:
                 classes_with_most_instances.add(x_class)
 
         return choice(classes_with_most_instances) # Return a random class with most instance.
+
+    def _inverse_square(self, x_dists: np.ndarray, y: np.ndarray):
+        """
+        ...
+
+        :param x_dists: (np.ndarray) List of distances of the K nearest instances.
+        :param y: (np.ndarray) List of classes of the K nearest instances.
+        :return: (int/str) Target class.
+        """
+
+        if 0 in x_dists: # If at least one instance is at distance 0, we must use majority over these instances that are at distance 0.
+            new_x_dists = []
+            new_y = []
+            for x_dist, x_class in zip(x_dists, y):
+                if x_dist == 0:
+                    new_x_dists.append(x_dist)
+                    new_y.append(x_class)
+            return self._majority(new_x_dists, new_y)
+
+        # Otherwise, follows to the procedure.
+
+        counter = defaultdict(lambda: 0) # Dictionary that returns 0 if key invalid.
+
+        for x_dist, x_class in zip(x_dists, y):
+            counter[x_class] += 1 / pow(x_dist, 2) # The weight is 1/d^2.
+
+        max_counter_value = max(counter.values()) # How many ''points'' the class with more ''points'' have.
+
+        classes_with_most_instances = set()
+        for x_class, class_counter_value in counter.items():
+            if class_counter_value == max_counter_value:
+                classes_with_most_instances.add(x_class)
+
+        return choice(classes_with_most_instances) # Return a random class with most ''points''.
