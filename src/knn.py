@@ -1,3 +1,5 @@
+from collections import defaultdict
+from random import choice
 from pandas import DataFrame, Series
 from math import pow, sqrt
 import numpy as np
@@ -96,4 +98,17 @@ class KNN:
         :param y: (np.ndarray) List of classes of the K nearest instances.
         :return: (int/str) Target class.
         """
-        raise NotImplementedError()
+
+        counter = defaultdict(lambda: 0) # Dictionary that returns 0 if key invalid.
+
+        for x_class in y:
+            counter[x_class] += 1
+
+        max_counter_value = max(counter.values()) # How many instances the class with more instances have.
+
+        classes_with_most_instances = set()
+        for x_class, class_counter_value in counter.items():
+            if class_counter_value == max_counter_value:
+                classes_with_most_instances.add(x_class)
+
+        return choice(classes_with_most_instances) # Return a random class with most instance.
