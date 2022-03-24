@@ -1,5 +1,5 @@
 from collections import defaultdict
-from random import choice
+from random import choice, random
 from pandas import DataFrame, Series
 from math import pow, sqrt
 import numpy as np
@@ -64,7 +64,7 @@ class KNN:
         distances_by_id = {inst_id: self.distance_metric(inst, x) for inst_id, inst in enumerate(self.x)}
 
         from operator import itemgetter
-        nearest_k_ids = list(map(itemgetter(0), sorted(distances_by_id.items(), key=itemgetter(1))))[:self.k]
+        nearest_k_ids = list(map(itemgetter(0), sorted(distances_by_id.items(), key=(itemgetter(1), random()))))[:self.k]
 
         x_dists = [distances_by_id[id] for id in nearest_k_ids]
         y = [self.y[id] for id in nearest_k_ids]
