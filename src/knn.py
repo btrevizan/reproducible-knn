@@ -13,7 +13,7 @@ class KNN:
 
         :param k: (int) Number of neighbors to consider on classification. Must be greater than 1.
         :param dist: (str, default 'euclidean') Distance metric. Possible values: euclidean, (TBD)...
-        :param evaluator_method: (str, default 'majority') Method of evaluating the nearest k neighbors. Possible values: majority, (TBD)...
+        :param evaluator_method: (str, default 'majority') Method of evaluating the nearest k neighbors. Possible values: majority, inverse_square, (TBD)...
 
         Raise ValueError if k <= 1.
         Raise ValueError if distance metric is unknown.
@@ -92,6 +92,10 @@ class KNN:
 
     def _majority(self, x_dists: np.ndarray, y: np.ndarray):
         """
+        Give points to the classes to decide which one is the most likely.
+        To do that, it considers a list of k nearest instances.
+        Sums 1 point to each class in the list.
+        Return the class with most points, tie-breaking with randomization.
         ...
 
         :param x_dists: (np.ndarray) List of distances of the K nearest instances.
@@ -115,6 +119,11 @@ class KNN:
 
     def _inverse_square(self, x_dists: np.ndarray, y: np.ndarray):
         """
+        Give points to the classes to decide which one is the most likely.
+        To do that, it considers a list of k nearest instances.
+        Sums 1/(distance^2) points to each class in the list.
+        Return the class with most points, tie-breaking with randomization.
+        An expection is if some distances are zero, in this case, it is used majority over the instances at distance 0.
         ...
 
         :param x_dists: (np.ndarray) List of distances of the K nearest instances.
