@@ -1,19 +1,20 @@
-from collections import defaultdict
-from random import choice, random
 from pandas import DataFrame, Series
+from collections import defaultdict
+from collections import Counter
 from math import pow, sqrt
 import numpy as np
 
 
 class KNN:
 
-    def __init__(self, k: int, dist: str = 'euclidean', evaluator_method: str = 'majority'):
+    def __init__(self, k: int, dist: str = 'euclidean', evaluator_method: str = 'majority', seed: int = 1234):
         """
         Implement the K Nearest Neighbors.
 
         :param k: (int) Number of neighbors to consider on classification. Must be greater than 1.
         :param dist: (str, default 'euclidean') Distance metric. Possible values: euclidean, (TBD)...
         :param evaluator_method: (str, default 'majority') Method of evaluating the nearest k neighbors. Possible values: majority, inverse_square, (TBD)...
+        :param seed: (int) Seed for random state.
 
         Raise ValueError if k <= 1.
         Raise ValueError if distance metric is unknown.
@@ -29,6 +30,7 @@ class KNN:
 
         self.distance_metric = eval(f'self._{dist}')
         self.evaluator_method = eval(f'self._{evaluator_method}')
+        self.random_state = np.random.RandomState(seed)
         self.x = None
         self.y = None
         self.k = k
@@ -46,7 +48,7 @@ class KNN:
         self.x = x
         self.y = y
 
-    def predict(self, x):
+    def predict(self, x: any) -> any:
         """
         Predict the class of the instance x.
 
@@ -61,15 +63,14 @@ class KNN:
         if type(x) is Series:
             x = x.to_numpy()
 
-        distances_by_id = {inst_id: self.distance_metric(inst, x) for inst_id, inst in enumerate(self.x)}
+        distances = [self.distance_metric(instance, x) for instance in self.x]
+        nearest_neighbors = np.argsort(distances)
+        nearest_k_neighbors = nearest_neighbors[:self.k]
 
-        from operator import itemgetter
-        nearest_k_ids = list(map(itemgetter(0), sorted(distances_by_id.items(), key=(itemgetter(1), random()))))[:self.k]
+        nearest_k_neighbors_distances = [distances[neighbor] for neighbor in nearest_k_neighbors]
+        nearest_k_neighbors_classes = [self.y[neighbor] for neighbor in nearest_k_neighbors]
 
-        x_dists = [distances_by_id[id] for id in nearest_k_ids]
-        y = [self.y[id] for id in nearest_k_ids]
-
-        return self.evaluator_method(x_dists, y)
+        return self.evaluator_method(nearest_k_neighbors_distances, nearest_k_neighbors_classes)
 
     @staticmethod
     def _euclidean(a: np.ndarray, b: np.ndarray) -> float:
@@ -90,68 +91,79 @@ class KNN:
 
         return sqrt_sum_squared_error
 
-    def _majority(self, x_dists: np.ndarray, y: np.ndarray):
+    def _majority(self, x: np.ndarray, y: np.ndarray) -> any:
         """
         Give points to the classes to decide which one is the most likely.
         To do that, it considers a list of k nearest instances.
         Sums 1 point to each class in the list.
         Return the class with most points, tie-breaking with randomization.
-        ...
 
-        :param x_dists: (np.ndarray) List of distances of the K nearest instances.
+        :param x: (np.ndarray) List of distances of the K nearest instances.
+            Not used in this function. It exists only to keep the same interface with other methods.
         :param y: (np.ndarray) List of classes of the K nearest instances.
         :return: (int/str) Target class.
         """
-
-        counter = defaultdict(lambda: 0) # Dictionary that returns 0 if key invalid.
+        # Dictionary that returns 0 if key invalid.
+        counter = defaultdict(lambda: 0)
 
         for x_class in y:
             counter[x_class] += 1
 
-        max_counter_value = max(counter.values()) # How many instances the class with more instances have.
+        return self._get_class_with_biggest_score(counter)
 
-        classes_with_most_instances = set()
-        for x_class, class_counter_value in counter.items():
-            if class_counter_value == max_counter_value:
-                classes_with_most_instances.add(x_class)
-
-        return choice(classes_with_most_instances) # Return a random class with most instance.
-
-    def _inverse_square(self, x_dists: np.ndarray, y: np.ndarray):
+    def _inverse_square(self, x: np.ndarray, y: np.ndarray):
         """
         Give points to the classes to decide which one is the most likely.
         To do that, it considers a list of k nearest instances.
         Sums 1/(distance^2) points to each class in the list.
         Return the class with most points, tie-breaking with randomization.
         An expection is if some distances are zero, in this case, it is used majority over the instances at distance 0.
-        ...
 
-        :param x_dists: (np.ndarray) List of distances of the K nearest instances.
+        :param x: (np.ndarray) List of distances of the K nearest instances.
         :param y: (np.ndarray) List of classes of the K nearest instances.
         :return: (int/str) Target class.
         """
-
-        if 0 in x_dists: # If at least one instance is at distance 0, we must use majority over these instances that are at distance 0.
+        # If at least one instance is at distance 0, we must use majority over these instances that are at distance 0.
+        if 0 in x:
             new_x_dists = []
             new_y = []
-            for x_dist, x_class in zip(x_dists, y):
+
+            for x_dist, x_class in zip(x, y):
                 if x_dist == 0:
                     new_x_dists.append(x_dist)
                     new_y.append(x_class)
+
+            new_x_dists = np.array(new_x_dists)
+            new_y = np.array(new_y)
+
             return self._majority(new_x_dists, new_y)
 
         # Otherwise, follows to the procedure.
+        # Dictionary that returns 0 if key invalid.
+        counter = defaultdict(lambda: 0)
 
-        counter = defaultdict(lambda: 0) # Dictionary that returns 0 if key invalid.
+        for x_dist, x_class in zip(x, y):
+            counter[x_class] += 1 / pow(x_dist, 2)  # The weight is 1/d^2.
 
-        for x_dist, x_class in zip(x_dists, y):
-            counter[x_class] += 1 / pow(x_dist, 2) # The weight is 1/d^2.
+        self._get_class_with_biggest_score(counter)
 
-        max_counter_value = max(counter.values()) # How many ''points'' the class with more ''points'' have.
+    def _get_class_with_biggest_score(self, class_scores: dict) -> any:
+        """
+        Given a score for each class, return the class with the biggest score.
+        If tie, we choose a class randomly.
 
-        classes_with_most_instances = set()
-        for x_class, class_counter_value in counter.items():
-            if class_counter_value == max_counter_value:
-                classes_with_most_instances.add(x_class)
+        :param class_scores: (dict) {class_label (int/str): score (int)}
+        :return: (int/str) The class with the biggest score.
+        """
+        ordered_class_count = sorted(class_scores.items(), key=lambda item: item[1])  # list of tuples
+        max_frequency = ordered_class_count[0][1]
+        classes_with_most_instances = [max_frequency]
 
-        return choice(classes_with_most_instances) # Return a random class with most ''points''.
+        for instance_class, frequency in ordered_class_count[1:]:
+            if frequency == max_frequency:
+                classes_with_most_instances.append(instance_class)
+            else:
+                break
+
+        # Return a random class with most instances
+        return self.random_state.choice(classes_with_most_instances)
