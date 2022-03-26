@@ -52,7 +52,7 @@ class KNN:
         """
         Predict the class of the instance "testing_instance".
 
-        :param x: (Series/np.ndarray) Instance to be predicted.
+        :param testing_instance: (Series/np.ndarray) Instance to be predicted.
         :return: (int/str) Target class.
 
         Raise ValueError if called before fit.
