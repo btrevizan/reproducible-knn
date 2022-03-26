@@ -67,7 +67,7 @@ class KNN:
         nearest_neighbors_ids = np.argsort(distances)
         nearest_k_neighbors_ids = nearest_neighbors_ids[:self.k]
 
-        nearest_k_neighbors_distances = [distances[neighbor_id] for neighbor_id in nearest_k_neighbors_ids]
+        nearest_k_neighbors_distances = [distances[neighbor_id][0] for neighbor_id in nearest_k_neighbors_ids]
         nearest_k_neighbors_classes = [self.training_instances_classes[neighbor_id] for neighbor_id in nearest_k_neighbors_ids]
 
         return self.evaluator_method(nearest_k_neighbors_distances, nearest_k_neighbors_classes)
