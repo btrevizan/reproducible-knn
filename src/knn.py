@@ -64,11 +64,11 @@ class KNN:
             x = x.to_numpy()
 
         distances = [self.distance_metric(instance, x) for instance in self.x]
-        nearest_neighbors = np.argsort(distances)
-        nearest_k_neighbors = nearest_neighbors[:self.k]
+        nearest_neighbors_ids = np.argsort(distances)
+        nearest_k_neighbors_ids = nearest_neighbors_ids[:self.k]
 
-        nearest_k_neighbors_distances = [distances[neighbor] for neighbor in nearest_k_neighbors]
-        nearest_k_neighbors_classes = [self.y[neighbor] for neighbor in nearest_k_neighbors]
+        nearest_k_neighbors_distances = [distances[neighbor] for neighbor in nearest_k_neighbors_ids]
+        nearest_k_neighbors_classes = [self.y[neighbor] for neighbor in nearest_k_neighbors_ids]
 
         return self.evaluator_method(nearest_k_neighbors_distances, nearest_k_neighbors_classes)
 
