@@ -63,7 +63,7 @@ class KNN:
         if type(testing_instance) is Series:
             testing_instance = testing_instance.to_numpy()
 
-        distances = [self.distance_metric(training_instance, testing_instance) for training_instance in self.training_instances]
+        distances = [(self.distance_metric(training_instance, testing_instance), np.random.random()) for training_instance in self.training_instances]
         nearest_neighbors_ids = np.argsort(distances)
         nearest_k_neighbors_ids = nearest_neighbors_ids[:self.k]
 
