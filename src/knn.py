@@ -31,44 +31,44 @@ class KNN:
         self.distance_metric = eval(f'self._{dist}')
         self.evaluator_method = eval(f'self._{evaluator_method}')
         self.random_state = np.random.RandomState(seed)
-        self.x = None
-        self.y = None
+        self.training_instances = None
+        self.training_instances_classes = None
         self.k = k
 
-    def fit(self, x, y):
+    def fit(self, training_instances, training_instances_classes):
         """
-        Store x and y.
+        Store "training_instances" and "training_instances_classes".
 
-        :param x: (pandas.DataFrame or numpy.ndarray) Training instances.
-        :param y: (pandas.Series or numpy.array) Target class for each instance.
+        :param training_instances: (pandas.DataFrame or numpy.ndarray) Training instances.
+        :param training_instances_classes: (pandas.Series or numpy.array) Target class for each instance.
         """
-        if type(x) is DataFrame:
-            x = x.to_numpy()
+        if type(training_instances) is DataFrame:
+            training_instances = training_instances.to_numpy()
 
-        self.x = x
-        self.y = y
+        self.training_instances = training_instances
+        self.training_instances_classes = training_instances_classes
 
-    def predict(self, x: any) -> any:
+    def predict(self, testing_instance: any) -> any:
         """
-        Predict the class of the instance x.
+        Predict the class of the instance "testing_instance".
 
         :param x: (Series/np.ndarray) Instance to be predicted.
         :return: (int/str) Target class.
 
         Raise ValueError if called before fit.
         """
-        if self.x is None:
+        if self.training_instances is None:
             raise ValueError('You should fit the model before predicting.')
 
-        if type(x) is Series:
-            x = x.to_numpy()
+        if type(testing_instance) is Series:
+            testing_instance = testing_instance.to_numpy()
 
-        distances = [self.distance_metric(instance, x) for instance in self.x]
-        nearest_neighbors = np.argsort(distances)
-        nearest_k_neighbors = nearest_neighbors[:self.k]
+        distances = [(self.distance_metric(training_instance, testing_instance), np.random.random()) for training_instance in self.training_instances]
+        nearest_neighbors_ids = np.argsort(distances)
+        nearest_k_neighbors_ids = nearest_neighbors_ids[:self.k]
 
-        nearest_k_neighbors_distances = [distances[neighbor] for neighbor in nearest_k_neighbors]
-        nearest_k_neighbors_classes = [self.y[neighbor] for neighbor in nearest_k_neighbors]
+        nearest_k_neighbors_distances = [distances[neighbor_id][0] for neighbor_id in nearest_k_neighbors_ids]
+        nearest_k_neighbors_classes = [self.training_instances_classes[neighbor_id] for neighbor_id in nearest_k_neighbors_ids]
 
         return self.evaluator_method(nearest_k_neighbors_distances, nearest_k_neighbors_classes)
 
@@ -157,9 +157,9 @@ class KNN:
         """
         ordered_class_count = sorted(class_scores.items(), key=lambda item: item[1])  # list of tuples
         max_frequency = ordered_class_count[0][1]
-        classes_with_most_instances = [max_frequency]
+        classes_with_most_instances = []
 
-        for instance_class, frequency in ordered_class_count[1:]:
+        for instance_class, frequency in ordered_class_count:
             if frequency == max_frequency:
                 classes_with_most_instances.append(instance_class)
             else:
