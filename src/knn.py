@@ -157,9 +157,9 @@ class KNN:
         """
         ordered_class_count = sorted(class_scores.items(), key=lambda item: item[1])  # list of tuples
         max_frequency = ordered_class_count[0][1]
-        classes_with_most_instances = [max_frequency]
+        classes_with_most_instances = []
 
-        for instance_class, frequency in ordered_class_count[1:]:
+        for instance_class, frequency in ordered_class_count:
             if frequency == max_frequency:
                 classes_with_most_instances.append(instance_class)
             else:
