@@ -156,7 +156,7 @@ class KNN:
         :param class_scores: (dict) {class_label (int/str): score (int)}
         :return: (int/str) The class with the biggest score.
         """
-        ordered_class_count = sorted(class_scores.items(), key=lambda item: item[1])  # list of tuples
+        ordered_class_count = sorted(class_scores.items(), key=lambda item: item[1], reverse=True)  # list of tuples
         max_frequency = ordered_class_count[0][1]
         classes_with_most_instances = []
 
