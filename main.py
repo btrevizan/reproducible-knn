@@ -14,9 +14,10 @@ class Main:
         """
         Evaluate a model using the specified dataset and changing its parameters.
         We use k-fold cross validation repeated 5 times as the evaluation method.
-        The results are saved in the results/<dataset>/<execution number>.csv
+        The results are saved in the results/<dataset>.csv
 
         :param dataset: (str) Name of the dataset to be used.
+            Possible values: ['iris', 'letter', 'mushroom', 'dis', 'shuttle', 'adult', 'breast_cancer', 'lupus', 'spambase']
         :param seed: (int, default 1234) Seed for random state.
         """
         cols = ['dataset', 'cv', 'k_label', 'k', 'dist', 'evaluator', 'n_folds', 'fold', 'accuracy', 'precision', 'recall', 'f1']

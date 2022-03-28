@@ -13,8 +13,7 @@ $ pip install -r requirements.txt
 
 ## Usage
 We have the following available methods in the command line:
-- cv
-- ...
+- evaluate
 
 ### How to check the method usage
 To check how to use a specific method, you can run:
@@ -24,32 +23,34 @@ $ python main.py <method> -h
 This will show you the mandatory and optional parameters
 as well a description of the method. For example:
 ```{shell}
-$ python main.py cv -h
+$ python main.py evaluate -h
 ```
 ```
 NAME
-    main.py cv - Cross-validate a model.
+    main.py evaluate - Evaluate a model using the specified dataset and changing its parameters. We use k-fold cross validation repeated 5 times as the evaluation method. The results are saved in the results/<dataset>.csv
 
 SYNOPSIS
-    main.py cv DATASET K <flags>
+    main.py evaluate DATASET <flags>
 
 DESCRIPTION
-    Cross-validate a model.
+    Evaluate a model using the specified dataset and changing its parameters. We use k-fold cross validation repeated 5 times as the evaluation method. The results are saved in the results/<dataset>.csv
 
 POSITIONAL ARGUMENTS
     DATASET
         Type: str
-        (str) Path to the dataset.
-    K
-        Type: int
-        (int) Number of neighbors to consider on classification. Must be greater than 1.
+        (str) Name of the dataset to be used.
+        Possible values: ['iris', 'letter', 'mushroom', 'dis', 'shuttle', 'adult', 'breast_cancer', 'lupus', 'spambase']
 
 FLAGS
-    --dist=DIST
-        Type: str
-        Default: 'euclidean'
-        (str, default 'euclidean') Distance metric. Possible values: euclidean, (TBD)...
+    --seed=SEED
+        Type: int
+        Default: 1234
+        (int, default 1234) Seed for random state.
 
 NOTES
     You can also use flags syntax for POSITIONAL ARGUMENTS
+```
+For example:
+```{shell}
+$ python main.py evaluate iris
 ```
