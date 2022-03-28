@@ -12,15 +12,8 @@ class Dataset:
         :param name: (str) Dataset name. Used directly on fetch_data function.
         Possible values: ['iris', 'letter', 'mushroom', 'dis', 'shuttle', 'adult', 'breast_cancer', 'lupus', 'spambase']
         """
-        possible_datasets = ['iris',
-                             'letter',
-                             'mushroom',
-                             'dis',
-                             'shuttle',
-                             'adult',
-                             'breast_cancer',
-                             'lupus',
-                             'spambase']
+        possible_datasets = ['iris', 'letter', 'mushroom', 'dis', 'shuttle',
+                             'adult', 'breast_cancer', 'lupus', 'spambase']
 
         if name not in possible_datasets:
             raise ValueError(f'Dataset "{name}" not available. Possible values: [\'iris\', \'letter\', \'mushroom\', '
@@ -31,6 +24,7 @@ class Dataset:
 
         self.x = data.iloc[:, :-1]
         self.y = data.iloc[:, -1]
+        self.n_folds = 0
 
         # Function called to preprocess the data if needed
         exec(f'self._{name}()')
@@ -45,6 +39,7 @@ class Dataset:
         n_classes: 3
         imbalance: 0
         """
+        self.n_folds = 5
         continuous_features = list(range(4))  # 0, 1, 2, 3
         self._normalize_features(continuous_features)
 
@@ -59,6 +54,7 @@ class Dataset:
         n_classes: 26
         imbalance: 0
         """
+        self.n_folds = 10
         continuous_features = list(range(16))  # 0, 1, 2, 3, ..., 15
         self._normalize_features(continuous_features)
 
@@ -72,6 +68,7 @@ class Dataset:
         n_classes: 2
         imbalance: 0
         """
+        self.n_folds = 10
         categorical_features = list(range(22))
         self._one_hot_encode_features(categorical_features)
 
@@ -85,6 +82,7 @@ class Dataset:
         n_classes: 2
         imbalance: 0.94
         """
+        self.n_folds = 10
         continuous_features = [0, 17, 19, 21, 23, 25]
         categorical_features = [1, 26, 27, 28]
 
@@ -101,6 +99,7 @@ class Dataset:
         n_classes: 7
         imbalance: 0.59
         """
+        self.n_folds = 10
         continuous_features = list(range(9))
         self._normalize_features(continuous_features)
 
@@ -114,6 +113,7 @@ class Dataset:
         n_classes: 2
         imbalance: 0.27
         """
+        self.n_folds = 10
         continuous_features = [0, 2, 3, 4, 10, 11, 12]
         categorical_features = [1, 5, 6, 7, 8, 13]
 
@@ -130,6 +130,7 @@ class Dataset:
         n_classes: 2
         imbalance: 0.16
         """
+        self.n_folds = 5
         continuous_features = [2]
         categorical_features = [0, 1, 3, 4, 5, 7]
 
@@ -147,6 +148,7 @@ class Dataset:
         n_classes: 2
         imbalance: 0.04
         """
+        self.n_folds = 5
         continuous_features = list(range(3))
         self._normalize_features(continuous_features)
 
@@ -160,6 +162,7 @@ class Dataset:
         n_classes: 2
         imbalance: 0.04
         """
+        self.n_folds = 10
         continuous_features = list(range(57))
         self._normalize_features(continuous_features)
 

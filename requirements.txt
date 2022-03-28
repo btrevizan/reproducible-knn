@@ -2,3 +2,4 @@ pandas==1.4.1
 fire==0.4.0
 numpy==1.22.3
 pmlb==1.0.1.post3
+scikit-learn==1.0.2

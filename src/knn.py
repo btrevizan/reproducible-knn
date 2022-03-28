@@ -12,9 +12,10 @@ class KNN:
         Implement the K Nearest Neighbors.
 
         :param k: (int) Number of neighbors to consider on classification. Must be greater than 1.
-        :param dist: (str, default 'euclidean') Distance metric. Possible values: euclidean, (TBD)...
-        :param evaluator_method: (str, default 'majority') Method of evaluating the nearest k neighbors. Possible values: majority, inverse_square, (TBD)...
-        :param seed: (int) Seed for random state.
+        :param dist: (str, default 'euclidean') Distance metric. Possible values: euclidean.
+        :param evaluator_method: (str, default 'majority') Method of evaluating the nearest k neighbors.
+            Possible values: majority, inverse_square.
+        :param seed: (int, default 1234) Seed for random state.
 
         Raise ValueError if k <= 1.
         Raise ValueError if distance metric is unknown.
@@ -23,10 +24,10 @@ class KNN:
             raise ValueError('k must be greater than 1.')
 
         if dist not in ['euclidean']:
-            raise ValueError(f'dist must be euclidean, (TBD)... {dist} found.')
+            raise ValueError(f'dist must be euclidean... {dist} found.')
 
-        if dist not in ['majority']:
-            raise ValueError(f'evaluator_method must be majority, (TBD)... {evaluator_method} found.')
+        if evaluator_method not in ['majority', 'inverse_square']:
+            raise ValueError(f'evaluator_method must be majority, inverse_square... {evaluator_method} found.')
 
         self.distance_metric = eval(f'self._{dist}')
         self.evaluator_method = eval(f'self._{evaluator_method}')
@@ -63,12 +64,12 @@ class KNN:
         if type(testing_instance) is Series:
             testing_instance = testing_instance.to_numpy()
 
-        distances = [(self.distance_metric(training_instance, testing_instance), np.random.random()) for training_instance in self.training_instances]
+        distances = [self.distance_metric(training_instance, testing_instance) for training_instance in self.training_instances]
         nearest_neighbors_ids = np.argsort(distances)
         nearest_k_neighbors_ids = nearest_neighbors_ids[:self.k]
 
-        nearest_k_neighbors_distances = [distances[neighbor_id][0] for neighbor_id in nearest_k_neighbors_ids]
-        nearest_k_neighbors_classes = [self.training_instances_classes[neighbor_id] for neighbor_id in nearest_k_neighbors_ids]
+        nearest_k_neighbors_distances = [distances[neighbor_id] for neighbor_id in nearest_k_neighbors_ids]
+        nearest_k_neighbors_classes = [self.training_instances_classes.iloc[neighbor_id] for neighbor_id in nearest_k_neighbors_ids]
 
         return self.evaluator_method(nearest_k_neighbors_distances, nearest_k_neighbors_classes)
 
@@ -145,7 +146,7 @@ class KNN:
         for x_dist, x_class in zip(x, y):
             counter[x_class] += 1 / pow(x_dist, 2)  # The weight is 1/d^2.
 
-        self._get_class_with_biggest_score(counter)
+        return self._get_class_with_biggest_score(counter)
 
     def _get_class_with_biggest_score(self, class_scores: dict) -> any:
         """
