@@ -98,7 +98,7 @@ class KNN:
             squared_error = [pow(a[i] - b[i], 2) for i in range(a.size)]
             sum_squared_error = sum(squared_error)
             sqrt_sum_squared_error = sqrt(sum_squared_error)
-            if len(cache) * len(ab_hash + 8) > cache_limit * 10**9: # If we already have reached the size limit of the cache, return the result immediately.
+            if len(cache) * (len(ab_hash) + 8) > cache_limit * 10**9: # If we already have reached the size limit of the cache, return the result immediately.
                 return sqrt_sum_squared_error
             cache[ab_hash] = sqrt_sum_squared_error
 
