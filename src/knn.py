@@ -26,7 +26,7 @@ class KNN:
         if dist not in ['euclidean']:
             raise ValueError(f'dist must be euclidean... {dist} found.')
 
-        if evaluator_method not in ['majority', 'inverse_square']:
+        if evaluator_method not in ['majority', 'inverse_square', 'averaged_inverse_square']:
             raise ValueError(f'evaluator_method must be majority, inverse_square... {evaluator_method} found.')
 
         self.distance_metric = eval(f'self._{dist}')
