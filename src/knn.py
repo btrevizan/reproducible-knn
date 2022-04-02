@@ -176,7 +176,7 @@ class KNN:
         counter = defaultdict(lambda: 0)
 
         for x_dist, x_class in zip(x, y):
-            counter[x_class] += 1 / pow(x_dist, 2) / self.training_instances_classes.count(x_class)
+            counter[x_class] += 1 / pow(x_dist, 2) / self.training_instances_classes.to_list().count(x_class)
 
         return self._get_class_with_biggest_score(counter)
 
