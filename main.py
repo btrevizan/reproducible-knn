@@ -72,6 +72,10 @@ class Main:
 
         save_results(dataset, results)
 
+    def evaluate_all(self, seed: int = 1234):
+        for dataset in ['iris', 'letter', 'mushroom', 'dis', 'shuttle', 'adult', 'breast_cancer', 'lupus', 'spambase']:
+            self.evaluate(self, dataset, seed)
+
 
 if __name__ == '__main__':
     Fire(Main)
