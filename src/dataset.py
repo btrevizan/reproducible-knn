@@ -190,7 +190,7 @@ class Dataset:
         """
         categories = set(x)
         columns = [f'{x.name}_{category}' for category in categories]
-        result = DataFrame(columns=columns)
+        result = DataFrame(columns=columns, index=x.index.values)
 
         paired_categories = zip(categories, columns)
         for j, paired_category in enumerate(paired_categories):
