@@ -84,9 +84,9 @@ def cross_validate(estimator: KNN, x: DataFrame, y: Series, folds: list) -> dict
             recall = recall_score(test_y, pred_y)
             f1 = f1_score(test_y, pred_y)
         else:
-            precision = precision_score(test_y, pred_y, labels=labels, average='micro')
-            recall = recall_score(test_y, pred_y, labels=labels, average='micro')
-            f1 = f1_score(test_y, pred_y, labels=labels, average='micro')
+            precision = precision_score(test_y, pred_y, labels=labels, average='macro')
+            recall = recall_score(test_y, pred_y, labels=labels, average='macro')
+            f1 = f1_score(test_y, pred_y, labels=labels, average='macro')
 
         results['accuracy'].append(accuracy)
         results['precision'].append(precision)
