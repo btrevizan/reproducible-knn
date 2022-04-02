@@ -39,6 +39,9 @@ class Main:
             for k_label, k in possible_k.items():
                 for dist in possible_dist:
                     for evaluator in possible_evaluator:
+                        if evaluator != 'majority' and k_label != 'n':
+                            continue #Skip invalid configurations.
+
                         print(f'\tValidate k={k}, dist={dist}, evaluator={evaluator}...')
 
                         estimator = KNN(k, dist, evaluator)
