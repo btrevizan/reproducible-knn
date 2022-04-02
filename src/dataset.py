@@ -195,7 +195,7 @@ class Dataset:
         paired_categories = zip(categories, columns)
         for j, paired_category in enumerate(paired_categories):
             category, column = paired_category
-            result[column] = [int(x[i] == category) for i in range(x.size)]
+            result[column] = [int(x.iloc[i] == category) for i in range(x.size)]
 
         return result
 
