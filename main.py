@@ -28,7 +28,7 @@ class Main:
 
         possible_k = {'5': 5, 'sqrt(n)': int(sqrt(n)), 'n': int(n)}
         possible_dist = ['euclidean']
-        possible_evaluator = ['majority', 'inverse_square']
+        possible_evaluator = ['majority', 'inverse_square', 'averaged_inverse_square']
 
         for cv in range(5):
             print(f'Cross validation #{cv}')
