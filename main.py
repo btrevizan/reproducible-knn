@@ -28,7 +28,7 @@ class Main:
 
         possible_k = {'5': 5, 'sqrt(n)': int(sqrt(n)), 'n': int(n)}
         possible_dist = ['euclidean']
-        possible_evaluator = ['majority', 'inverse_square']
+        possible_evaluator = ['majority', 'inverse_square', 'averaged_inverse_square']
 
         for cv in range(5):
             print(f'Cross validation #{cv}')
@@ -39,6 +39,9 @@ class Main:
             for k_label, k in possible_k.items():
                 for dist in possible_dist:
                     for evaluator in possible_evaluator:
+                        if evaluator != 'majority' and k_label != 'n':
+                            continue #Skip invalid configurations.
+
                         print(f'\tValidate k={k}, dist={dist}, evaluator={evaluator}...')
 
                         estimator = KNN(k, dist, evaluator)
@@ -68,6 +71,10 @@ class Main:
                             results = concat([results, result], ignore_index=True)
 
         save_results(dataset, results)
+
+    def evaluate_all(self, seed: int = 1234):
+        for dataset in ['iris', 'letter', 'mushroom', 'dis', 'shuttle', 'adult', 'breast_cancer', 'lupus', 'spambase']:
+            self.evaluate(dataset, seed)
 
 
 if __name__ == '__main__':
