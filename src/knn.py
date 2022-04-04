@@ -1,9 +1,11 @@
 from pandas import DataFrame, Series
 from collections import defaultdict
 from collections import Counter
-from math import pow, sqrt
+from math import sqrt
 import numpy as np
 
+cache = {}
+cache_limit = 2 # In GB. Works if evaluation a single dataset in the execution.
 
 class KNN:
 
@@ -83,14 +85,24 @@ class KNN:
 
         :return: (float) Euclidean distance between a and b.
         """
-        if a.size != b.size:
-            raise ValueError(f'a and b must have equal lengths. {a.size} != {b.size}.')
 
-        squared_error = [pow(a[i] - b[i], 2) for i in range(a.size)]
-        sum_squared_error = sum(squared_error)
-        sqrt_sum_squared_error = sqrt(sum_squared_error)
+        a_hash = a.tobytes()
+        b_hash = b.tobytes()
 
-        return sqrt_sum_squared_error
+        ab_hash = a_hash+b_hash if a_hash>b_hash else b_hash+a_hash
+
+        if not ab_hash in cache.keys():
+            if a.size != b.size:
+                raise ValueError(f'a and b must have equal lengths. {a.size} != {b.size}.')
+
+            squared_error = [(a[i] - b[i]) * (a[i] - b[i]) for i in range(a.size)]
+            sum_squared_error = sum(squared_error)
+            sqrt_sum_squared_error = sqrt(sum_squared_error)
+            if len(cache) * (len(ab_hash) + 8) > cache_limit * 10**9: # If we already have reached the size limit of the cache, return the result immediately.
+                return sqrt_sum_squared_error
+            cache[ab_hash] = sqrt_sum_squared_error
+
+        return cache[ab_hash]
 
     def _majority(self, x: np.ndarray, y: np.ndarray) -> any:
         """
@@ -144,7 +156,7 @@ class KNN:
         counter = defaultdict(lambda: 0)
 
         for x_dist, x_class in zip(x, y):
-            counter[x_class] += 1 / pow(x_dist, 2)  # The weight is 1/d^2.
+            counter[x_class] += 1 / (x_dist * x_dist)  # The weight is 1/d^2.
 
         return self._get_class_with_biggest_score(counter)
 
@@ -176,7 +188,7 @@ class KNN:
         counter = defaultdict(lambda: 0)
 
         for x_dist, x_class in zip(x, y):
-            counter[x_class] += 1 / pow(x_dist, 2) / self.training_instances_classes.to_list().count(x_class)
+            counter[x_class] += 1 / (x_dist * x_dist) / self.training_instances_classes.to_list().count(x_class)
 
         return self._get_class_with_biggest_score(counter)
 

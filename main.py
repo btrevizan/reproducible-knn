@@ -5,6 +5,7 @@ from src.dataset import Dataset
 from src.knn import KNN
 from fire import Fire
 from math import sqrt
+from time import time
 import numpy as np
 
 
@@ -17,9 +18,12 @@ class Main:
         The results are saved in the results/<dataset>.csv
 
         :param dataset: (str) Name of the dataset to be used.
-            Possible values: ['iris', 'letter', 'mushroom', 'dis', 'shuttle', 'adult', 'breast_cancer', 'lupus', 'spambase']
+            Possible values: ['iris', 'letter', 'mushroom', 'dis', 'shuttle', 'breast_cancer', 'lupus', 'spambase']
         :param seed: (int, default 1234) Seed for random state.
         """
+
+        start = time()
+
         cols = ['dataset', 'cv', 'k_label', 'k', 'dist', 'evaluator', 'n_folds', 'fold', 'accuracy', 'precision', 'recall', 'f1']
         results = DataFrame(columns=cols)
 
@@ -72,8 +76,10 @@ class Main:
 
         save_results(dataset, results)
 
+        print(f'Total time for dataset \"{dataset}\": {time() - start}s')
+
     def evaluate_all(self, seed: int = 1234):
-        for dataset in ['iris', 'letter', 'mushroom', 'dis', 'shuttle', 'adult', 'breast_cancer', 'lupus', 'spambase']:
+        for dataset in ['iris', 'letter', 'mushroom', 'dis', 'shuttle', 'breast_cancer', 'lupus', 'spambase']:
             self.evaluate(dataset, seed)
 
 
