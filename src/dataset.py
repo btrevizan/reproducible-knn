@@ -10,9 +10,9 @@ class Dataset:
         Load the data into the x and y properties and preprocess data, if needed.
 
         :param name: (str) Dataset name. Used directly on fetch_data function.
-        Possible values: ['iris', 'letter', 'mushroom', 'dis', 'shuttle', 'adult', 'breast_cancer', 'lupus', 'spambase']
+        Possible values: ['iris', 'wine_quality_white', 'car_evaluation', 'churn', 'dis', 'adult', 'breast_cancer', 'lupus', 'spambase']
         """
-        possible_datasets = ['iris', 'letter', 'mushroom', 'dis', 'shuttle',
+        possible_datasets = ['iris', 'wine_quality_white', 'car_evaluation', 'churn', 'dis',
                              'adult', 'breast_cancer', 'lupus', 'spambase']
 
         if name not in possible_datasets:
@@ -43,34 +43,32 @@ class Dataset:
         continuous_features = list(range(4))  # 0, 1, 2, 3
         self._normalize_features(continuous_features)
 
-    def _letter(self):
+    def _wine_quality_white(self):
         """
         Features include 16 statistics that describe intentionally warped images of typed capital letters.
         The images are not included.
-        Metadata: https://github.com/EpistasisLab/pmlb/blob/master/datasets/letter/metadata.yaml
+        Metadata: https://github.com/EpistasisLab/pmlb/blob/master/datasets/wine_quality_white/metadata.yaml
 
-        n_observations: 20000
-        n_features: 16
-        n_classes: 26
-        imbalance: 0
+        n_observations: 4898
+        n_features: 11
+        n_classes: 7
+        imbalance: 0.21
         """
         self.n_folds = 10
-        continuous_features = list(range(16))  # 0, 1, 2, 3, ..., 15
+        continuous_features = list(range(11))  # 0, 1, 2, 3, ..., 10
         self._normalize_features(continuous_features)
 
-    def _mushroom(self):
+    def _car_evaluation(self):
         """
         Mushroom records drawn from The Audubon Society Field Guide to North American Mushrooms.
-        Metadata: https://github.com/EpistasisLab/pmlb/blob/master/datasets/mushroom/metadata.yaml
+        Metadata: https://github.com/EpistasisLab/pmlb/blob/master/datasets/car_evaluation/metadata.yaml
 
-        n_observations: 8124
-        n_features: 22
-        n_classes: 2
-        imbalance: 0
+        n_observations: 1728
+        n_features: 21
+        n_classes: 4
+        imbalance: 0.39
         """
         self.n_folds = 10
-        categorical_features = list(range(22))
-        self._one_hot_encode_features(categorical_features)
 
     def _dis(self):
         """
@@ -89,19 +87,22 @@ class Dataset:
         self._normalize_features(continuous_features)
         self._one_hot_encode_features(categorical_features)
 
-    def _shuttle(self):
+    def _churn(self):
         """
         ...
-        Metadata: https://github.com/EpistasisLab/pmlb/blob/master/datasets/shuttle/metadata.yaml
+        Metadata: https://github.com/EpistasisLab/pmlb/blob/master/datasets/churn/metadata.yaml
 
-        n_observations: 58000
-        n_features: 9
-        n_classes: 7
-        imbalance: 0.59
+        n_observations: 5000
+        n_features: 20
+        n_classes: 2
+        imbalance: 0.51
         """
         self.n_folds = 10
-        continuous_features = list(range(9))
+        continuous_features = [0, 1, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+        categorical_features = [2, 19]
+
         self._normalize_features(continuous_features)
+        self._one_hot_encode_features(categorical_features)
 
     def _adult(self):
         """
