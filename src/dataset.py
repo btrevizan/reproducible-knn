@@ -10,14 +10,14 @@ class Dataset:
         Load the data into the x and y properties and preprocess data, if needed.
 
         :param name: (str) Dataset name. Used directly on fetch_data function.
-        Possible values: ['iris', 'wine_quality_white', 'car_evaluation', 'churn', 'dis', 'adult', 'breast_cancer', 'lupus', 'spambase']
+            Possible values: ['iris', 'wine_quality_white', 'car_evaluation', 'churn', 'dis', 'breast_cancer', 'lupus', 'spambase']
         """
-        possible_datasets = ['iris', 'wine_quality_white', 'car_evaluation', 'churn', 'dis',
-                             'adult', 'breast_cancer', 'lupus', 'spambase']
+        possible_datasets = ['iris', 'wine_quality_white', 'car_evaluation', 'churn',
+                             'dis', 'breast_cancer', 'lupus', 'spambase']
 
         if name not in possible_datasets:
-            raise ValueError(f'Dataset "{name}" not available. Possible values: [\'iris\', \'letter\', \'mushroom\', '
-                             f'\'dis\', \'shuttle\', \'adult\', \'breast_cancer\', \'lupus\', \'spambase\']')
+            raise ValueError(f'Dataset "{name}" not available. Possible values: [\'iris\', \'wine_quality_white\', '
+                             f'\'car_evaluation\', \'churn\', \'dis\', \'breast_cancer\', \'lupus\', \'spambase\']')
 
         data = fetch_data(name, dropna=True)
         data.drop_duplicates(inplace=True)
@@ -100,23 +100,6 @@ class Dataset:
         self.n_folds = 10
         continuous_features = [0, 1, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
         categorical_features = [2, 19]
-
-        self._normalize_features(continuous_features)
-        self._one_hot_encode_features(categorical_features)
-
-    def _adult(self):
-        """
-        Prediction of whether a person makes over $50K a year, based on 14 other features.
-        Metadata: https://github.com/EpistasisLab/pmlb/blob/master/datasets/adult/metadata.yaml
-
-        n_observations: 48842
-        n_features: 14
-        n_classes: 2
-        imbalance: 0.27
-        """
-        self.n_folds = 10
-        continuous_features = [0, 2, 3, 4, 10, 11, 12]
-        categorical_features = [1, 5, 6, 7, 8, 13]
 
         self._normalize_features(continuous_features)
         self._one_hot_encode_features(categorical_features)

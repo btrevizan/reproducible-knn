@@ -18,11 +18,11 @@ class Main:
         The results are saved in the results/<dataset>.csv
 
         :param dataset: (str) Name of the dataset to be used.
-            Possible values: ['iris', 'letter', 'mushroom', 'dis', 'shuttle', 'breast_cancer', 'lupus', 'spambase']
+            Possible values: ['iris', 'wine_quality_white', 'car_evaluation', 'churn', 'dis', 'breast_cancer', 'lupus', 'spambase']
         :param seed: (int, default 1234) Seed for random state.
         """
-
         start = time()
+        rs = np.random.RandomState(seed)
 
         cols = ['dataset', 'cv', 'k_label', 'k', 'dist', 'evaluator', 'n_folds', 'fold', 'accuracy', 'precision', 'recall', 'f1']
         results = DataFrame(columns=cols)
@@ -32,19 +32,17 @@ class Main:
 
         possible_k = {'5': 5, 'sqrt(n)': int(sqrt(n)), 'n': int(n)}
         possible_dist = ['euclidean']
-        possible_evaluator = ['majority', 'inverse_square', 'averaged_inverse_square']
+        possible_evaluator = ['majority', 'averaged_inverse_square']
 
         for cv in range(5):
             print(f'Cross validation #{cv}')
-
-            rs = np.random.RandomState(seed)
             folds = create_folds(data.y, data.n_folds, rs)
 
             for k_label, k in possible_k.items():
                 for dist in possible_dist:
                     for evaluator in possible_evaluator:
                         if evaluator != 'majority' and k_label != 'n':
-                            continue #Skip invalid configurations.
+                            continue  # Skip invalid configurations.
 
                         print(f'\tValidate k={k}, dist={dist}, evaluator={evaluator}...')
 
@@ -75,11 +73,10 @@ class Main:
                             results = concat([results, result], ignore_index=True)
 
         save_results(dataset, results)
-
         print(f'Total time for dataset \"{dataset}\": {time() - start}s')
 
     def evaluate_all(self, seed: int = 1234):
-        for dataset in ['iris', 'letter', 'mushroom', 'dis', 'shuttle', 'breast_cancer', 'lupus', 'spambase']:
+        for dataset in ['iris', 'wine_quality_white', 'car_evaluation', 'churn', 'dis', 'breast_cancer', 'lupus', 'spambase']:
             self.evaluate(dataset, seed)
 
 
