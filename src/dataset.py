@@ -1,5 +1,6 @@
 from pandas import Series, DataFrame, concat
 from pmlb import fetch_data
+from statistics import mean, stdev
 
 
 class Dataset:
@@ -161,6 +162,10 @@ class Dataset:
         min_x = x.min()
         max_x = x.max()
         normalized = (x - min_x) / (max_x - min_x)
+
+        # mean_x = mean(x)
+        # stdev_x = stdev(x)
+        # normalized = (x - mean_x) / stdev_x
 
         return normalized
 
