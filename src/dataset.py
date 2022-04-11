@@ -11,14 +11,14 @@ class Dataset:
         Load the data into the x and y properties and preprocess data, if needed.
 
         :param name: (str) Dataset name. Used directly on fetch_data function.
-            Possible values: ['iris', 'wine_quality_white', 'car_evaluation', 'churn', 'dis', 'breast_cancer', 'lupus', 'spambase']
+            Possible values: ['iris', 'wine_quality_white', 'car_evaluation', 'dis', 'breast_cancer', 'lupus', 'spambase']
         """
-        possible_datasets = ['iris', 'wine_quality_white', 'car_evaluation', 'churn',
+        possible_datasets = ['iris', 'wine_quality_white', 'car_evaluation',
                              'dis', 'breast_cancer', 'lupus', 'spambase']
 
         if name not in possible_datasets:
             raise ValueError(f'Dataset "{name}" not available. Possible values: [\'iris\', \'wine_quality_white\', '
-                             f'\'car_evaluation\', \'churn\', \'dis\', \'breast_cancer\', \'lupus\', \'spambase\']')
+                             f'\'car_evaluation\', \'dis\', \'breast_cancer\', \'lupus\', \'spambase\']')
 
         data = fetch_data(name, dropna=True)
         data.drop_duplicates(inplace=True)
@@ -84,23 +84,6 @@ class Dataset:
         self.n_folds = 10
         continuous_features = [0, 17, 19, 21, 23, 25]
         categorical_features = [1, 26, 27, 28]
-
-        self._normalize_features(continuous_features)
-        self._one_hot_encode_features(categorical_features)
-
-    def _churn(self):
-        """
-        ...
-        Metadata: https://github.com/EpistasisLab/pmlb/blob/master/datasets/churn/metadata.yaml
-
-        n_observations: 5000
-        n_features: 20
-        n_classes: 2
-        imbalance: 0.51
-        """
-        self.n_folds = 10
-        continuous_features = [0, 1, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
-        categorical_features = [2, 19]
 
         self._normalize_features(continuous_features)
         self._one_hot_encode_features(categorical_features)
