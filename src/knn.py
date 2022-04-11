@@ -16,7 +16,7 @@ class KNN:
         :param k: (int) Number of neighbors to consider on classification. Must be greater than 1.
         :param dist: (str, default 'euclidean') Distance metric. Possible values: euclidean.
         :param evaluator_method: (str, default 'majority') Method of evaluating the nearest k neighbors.
-            Possible values: majority, inverse_square, averaged_inverse_square.
+            Possible values: majority, inverse_square, averaged_inverse_square, averaged_inverse_mpower.
         :param seed: (int, default 1234) Seed for random state.
 
         Raise ValueError if k <= 1.
@@ -28,7 +28,7 @@ class KNN:
         if dist not in ['euclidean']:
             raise ValueError(f'dist must be euclidean... {dist} found.')
 
-        if evaluator_method not in ['majority', 'inverse_square', 'averaged_inverse_square']:
+        if evaluator_method not in ['majority', 'inverse_square', 'averaged_inverse_square', 'averaged_inverse_mpower']:
             raise ValueError(f'evaluator_method must be majority, inverse_square... {evaluator_method} found.')
 
         self.distance_metric = eval(f'self._{dist}')
@@ -189,6 +189,38 @@ class KNN:
 
         for x_dist, x_class in zip(x, y):
             counter[x_class] += 1 / (x_dist * x_dist) / self.training_instances_classes.to_list().count(x_class)
+
+        return self._get_class_with_biggest_score(counter)
+
+    def _averaged_inverse_mpower(self, x: np.ndarray, y: np.ndarray):
+        """
+        Same as "averaged_inverse_square", but weights by d^-m instead of d^-2.
+
+        :param x: (np.ndarray) List of distances of the K nearest instances.
+        :param y: (np.ndarray) List of classes of the K nearest instances.
+        :return: (int/str) Target class.
+        """
+        # If at least one instance is at distance 0, we must use majority over these instances that are at distance 0.
+        if 0 in x:
+            new_x_dists = []
+            new_y = []
+
+            for x_dist, x_class in zip(x, y):
+                if x_dist == 0:
+                    new_x_dists.append(x_dist)
+                    new_y.append(x_class)
+
+            new_x_dists = np.array(new_x_dists)
+            new_y = np.array(new_y)
+
+            return self._majority(new_x_dists, new_y)
+
+        # Otherwise, follows to the procedure.
+        # Dictionary that returns 0 if key invalid.
+        counter = defaultdict(lambda: 0)
+
+        for x_dist, x_class in zip(x, y):
+            counter[x_class] += 1 / (x_dist ** len(self.training_instances[0])) / self.training_instances_classes.to_list().count(x_class)
 
         return self._get_class_with_biggest_score(counter)
 
