@@ -18,7 +18,7 @@ class Main:
         The results are saved in the results/<dataset>.csv
 
         :param dataset: (str) Name of the dataset to be used.
-            Possible values: ['iris', 'wine_quality_white', 'car_evaluation', 'churn', 'dis', 'breast_cancer', 'lupus', 'spambase']
+            Possible values: ['iris', 'wine_quality_white', 'car_evaluation', 'dis', 'breast_cancer', 'lupus', 'spambase']
         :param seed: (int, default 1234) Seed for random state.
         """
         start = time()
@@ -76,7 +76,7 @@ class Main:
         print(f'Total time for dataset \"{dataset}\": {time() - start}s')
 
     def evaluate_all(self, seed: int = 1234):
-        for dataset in ['iris', 'wine_quality_white', 'car_evaluation', 'churn', 'dis', 'breast_cancer', 'lupus', 'spambase']:
+        for dataset in ['iris', 'wine_quality_white', 'car_evaluation', 'dis', 'breast_cancer', 'lupus', 'spambase']:
             self.evaluate(dataset, seed)
 
 
